@@ -1,0 +1,438 @@
+<!-- public/index.html -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pLL Primordium Gene Expression Database</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+         background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
+  #root { height: 100vh; }
+  input, textarea, select, button { font-family: inherit; }
+  .spin { animation: s 1s linear infinite; } @keyframes s { to { transform: rotate(360deg); } }
+</style>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useRef } = React;
+
+const SYSTEMS = ["Wnt", "FGF", "Notch", "BMP", "Other"];
+const SYS_COLOR = {
+  Wnt:  { c: "#34d399", b: "#065f46", bg: "#022c22" },
+  FGF:  { c: "#38bdf8", b: "#075985", bg: "#082f49" },
+  Notch:{ c: "#e879f9", b: "#86198f", bg: "#4a044e" },
+  BMP:  { c: "#fbbf24", b: "#92400e", bg: "#451a03" },
+  Other:{ c: "#a3a3a3", b: "#525252", bg: "#171717" },
+};
+
+// direction: "up" | "down" | "" (neither)
+const DIRECTIONS = ["", "up", "down"];
+const DIR_LABEL = { "": "—", up: "↑ Up", down: "↓ Down" };
+
+// 4-state filter cycle for each system button: all -> isolate -> up (green) -> down (red) -> all
+const FILTER_STATES = ["all", "isolate", "up", "down"];
+
+// Domain config — matches landing page exactly
+const DOMAIN_CONFIG = {
+  deposited: { label: "Deposited neuromast",   color: "#f97316" },
+  trailing:  { label: "Trailing domain",       color: "#e879f9" },
+  mature:    { label: "Mature neuromast",      color: "#e879f9" },
+  middle:    { label: "Middle domain",         color: "#4ade80" },
+  developing:{ label: "Developing neuromast",  color: "#4ade80" },
+  leading:   { label: "Leading domain",        color: "#f59e0b" },
+  proto:     { label: "Proto-neuromast",       color: "#38bdf8" },
+  hcp:       { label: "Hair cell progenitor",  color: "#a1a1aa" },
+};
+const DOMAIN_KEYS = ["deposited","trailing","mature","middle","developing","leading","proto","hcp"];
+
+const api = {
+  list:   () => fetch("/api/genes").then(r => r.json()),
+  update: (id, body) => fetch("/api/genes/" + id, { method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) }).then(r => r.json()),
+  create: (name) => fetch("/api/genes", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({name}) }).then(r => r.json()),
+  upload: (file) => { const fd = new FormData(); fd.append("image", file);
+                      return fetch("/api/upload", { method:"POST", body: fd }).then(r => r.json()); },
+};
+
+const imgUrl = (f) => f ? (f.startsWith("http") || f.startsWith("/") ? f : "/images/" + f) : "";
+
+function ImgSlot({ src, placeholderH }) {
+  if (src) return <img src={imgUrl(src)} style={{ width:"100%", height:"auto", display:"block" }} />;
+  return <div style={{ width:"100%", height:placeholderH||120, background:"#262626", border:"1px dashed #525252",
+    display:"flex", alignItems:"center", justifyContent:"center", color:"#737373", fontSize:11 }}>no image</div>;
+}
+
+function Upload({ onDone, small }) {
+  const ref = useRef(); const [busy, setBusy] = useState(false);
+  return (<>
+    <button onClick={() => ref.current.click()} disabled={busy}
+      style={{ ...btn, padding: small?"3px 8px":"6px 12px", fontSize: small?11:12 }}>
+      {busy ? "Uploading…" : "Upload"}
+    </button>
+    <input ref={ref} type="file" accept="image/*" style={{display:"none"}}
+      onChange={async (e) => { const f = e.target.files[0]; if (!f) return;
+        setBusy(true); try { const r = await api.upload(f); onDone(r.filename); } finally { setBusy(false); }
+        e.target.value=""; }} />
+  </>);
+}
+
+function TagEditor({ tags, onChange }) {
+  const [v, setV] = useState("");
+  const add = () => { const t = v.trim().toLowerCase(); if (t && !tags.includes(t)) onChange([...tags, t]); setV(""); };
+  return (<div style={{ display:"flex", flexWrap:"wrap", gap:4, alignItems:"center" }}>
+    {tags.map(t => <span key={t} style={tagChip}>{t}
+      <span onClick={() => onChange(tags.filter(x=>x!==t))} style={{cursor:"pointer", color:"#737373"}}>×</span></span>)}
+    <input value={v} onChange={e=>setV(e.target.value)} placeholder="+ tag"
+      onKeyDown={e=>{ if(e.key==="Enter"){e.preventDefault();add();} }} onBlur={add}
+      style={{ ...inp, width:64, fontSize:11, padding:"2px 4px" }} />
+  </div>);
+}
+
+function DomainTagger({ domains, onChange }) {
+  const toggle = (key) => {
+    const next = domains.includes(key) ? domains.filter(d=>d!==key) : [...domains, key];
+    onChange(next);
+  };
+  return (
+    <div>
+      <p style={{ fontSize:11, fontWeight:600, color:"#525252", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6 }}>Expression domains</p>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+        {DOMAIN_KEYS.map(key => {
+          const { label, color } = DOMAIN_CONFIG[key];
+          const active = domains.includes(key);
+          return (
+            <span key={key} onClick={() => toggle(key)} style={{
+              fontSize:11, fontWeight:600, borderRadius:6, padding:"4px 10px", cursor:"pointer",
+              border: `1px solid ${active ? color : "#333"}`,
+              background: active ? color+"22" : "transparent",
+              color: active ? color : "#525252",
+              transition:"all 0.15s",
+            }}>{label}</span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ImageSection({ label, img, caption, editing, onUpload, onCaptionChange, placeholderH }) {
+  return (
+    <div style={{ marginTop:20 }}>
+      <p style={{ fontSize:13, fontWeight:600, color:"#a3a3a3", textTransform:"uppercase",
+        letterSpacing:"0.05em", margin:"0 0 6px" }}>{label}</p>
+      <div style={{ borderRadius:8, overflow:"hidden", border:"1px solid #262626" }}>
+        {editing && (
+          <div style={{ display:"flex", gap:8, alignItems:"center", background:"#171717",
+            borderBottom:"1px solid #404040", padding:"6px 8px" }}>
+            <Upload small onDone={onUpload} />
+            <span style={{fontSize:11, color:"#737373"}}>upload image</span>
+          </div>
+        )}
+        <ImgSlot src={img} placeholderH={placeholderH} />
+      </div>
+      {editing
+        ? <input value={caption} onChange={e => onCaptionChange(e.target.value)}
+            style={{ ...inp, marginTop:6, fontSize:13 }} />
+        : <p style={{ fontSize:13, fontWeight:500, color:"#d4d4d4", marginTop:6 }}>{caption}</p>}
+    </div>
+  );
+}
+
+function App() {
+  const [genes, setGenes] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  const [geneQuery, setGeneQuery] = useState("");
+  const [permQuery, setPermQuery] = useState("");
+  const [sysFilterState, setSysFilterState] = useState({}); // { Wnt: "isolate"|"up"|"down", ... }
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    // pick gene from URL if present: /gene/:id
+    const urlId = window.location.pathname.replace(/^\/gene\//, "").replace(/\//,"");
+    api.list().then(gs => {
+      setGenes(gs);
+      const target = urlId && gs.find(g => g.id === urlId);
+      setActiveId(target ? target.id : gs[0]?.id);
+    });
+  }, []);
+
+  const active = genes.find(g => g.id === activeId);
+  const filteredGenes = genes
+    .filter(g => g.name.toLowerCase().includes(geneQuery.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const saveTimer = useRef();
+  const save = (next) => {
+    setGenes(gs => gs.map(g => g.id === next.id ? next : g));
+    clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setSaving(true);
+      await api.update(next.id, next);
+      setSaving(false);
+    }, 500);
+  };
+  const patch = (p) => save({ ...active, ...p });
+
+  const addCondition = () => patch({ conditions: [...active.conditions,
+    { id:"c"+Date.now(), label:"New perturbation", system:"Other", direction:"", img:"", note:"", tags:[] }] });
+  const updCond = (id, p) => patch({ conditions: active.conditions.map(c => c.id===id ? {...c, ...p} : c) });
+  const rmCond  = (id)    => patch({ conditions: active.conditions.filter(c => c.id!==id) });
+
+  const addGene = async () => {
+    const name = prompt("New gene name:"); if (!name) return;
+    const g = await api.create(name);
+    if (g.error) { alert(g.error); return; }
+    setGenes(gs => [...gs, g]); setActiveId(g.id); setEditing(true);
+  };
+
+  // Determine if any system button is in a non-"all" state — only one can be active
+  const activeSys = Object.entries(sysFilterState).find(([, st]) => st !== "all" && st);
+  const activeSysName = activeSys ? activeSys[0] : null;
+  const activeSysState = activeSys ? activeSys[1] : null; // "isolate" | "up" | "down"
+
+  const grouped = useMemo(() => {
+    if (!active) return {};
+    const q = permQuery.toLowerCase();
+    const out = {};
+    const systemsToShow = activeSysName ? [activeSysName] : SYSTEMS;
+    for (const sys of systemsToShow) {
+      let items = (active.conditions||[]).filter(c => c.system===sys &&
+        (c.label+" "+c.note+" "+(c.tags||[]).join(" ")).toLowerCase().includes(q));
+      if (activeSysName === sys) {
+        if (activeSysState === "up")   items = items.filter(c => c.direction === "up");
+        if (activeSysState === "down") items = items.filter(c => c.direction === "down");
+      }
+      if (items.length) out[sys] = items;
+    }
+    return out;
+  }, [active, permQuery, activeSysName, activeSysState]);
+
+  if (!active) return <div style={{padding:40, color:"#737373"}}>Loading…</div>;
+
+  const activeDomains = active.domains || [];
+
+  // Domain badges shown in header when not editing
+  const domainBadges = activeDomains.map(key => {
+    const { label, color } = DOMAIN_CONFIG[key] || {};
+    if (!label) return null;
+    return <span key={key} style={{ fontSize:11, fontWeight:600, borderRadius:6, padding:"3px 9px",
+      border:`1px solid ${color}55`, background:`${color}18`, color }}>{label}</span>;
+  });
+
+  return (
+  <div style={{ display:"flex", height:"100vh" }}>
+    {/* sidebar */}
+    <aside style={{ width:224, flexShrink:0, borderRight:"1px solid #1e1e1e", display:"flex", flexDirection:"column" }}>
+      <div style={{ padding:12, borderBottom:"1px solid #1e1e1e" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+          <a href="/" style={{ color:"#22d3ee", fontWeight:600, fontSize:13, textDecoration:"none" }}>
+            ← pLL Atlas
+          </a>
+          <a href="/table" style={{ color:"#525252", fontSize:11, textDecoration:"none", border:"1px solid #262626",
+            borderRadius:5, padding:"3px 8px" }}
+            onMouseEnter={e=>{e.target.style.color="#22d3ee"; e.target.style.borderColor="#22d3ee";}}
+            onMouseLeave={e=>{e.target.style.color="#525252"; e.target.style.borderColor="#262626";}}>
+            Table
+          </a>
+        </div>
+        <input value={geneQuery} onChange={e=>setGeneQuery(e.target.value)} placeholder="Search genes…" style={inp} />
+      </div>
+      <div style={{ flex:1, overflowY:"auto" }}>
+        {filteredGenes.map(g => {
+          const doms = g.domains || [];
+          return (
+            <div key={g.id} onClick={()=>{setActiveId(g.id); setEditing(false); window.history.pushState({},"","/gene/"+g.id);}}
+              style={{ padding:"6px 12px", fontSize:14, cursor:"pointer",
+                fontStyle:"italic", background: g.id===activeId?"#1a1a1a":"transparent",
+                color: g.id===activeId?"#67e8f9":"#d4d4d4", borderLeft: g.id===activeId?"2px solid #22d3ee":"2px solid transparent" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <span>{g.name}</span>
+                {g.conditions && g.conditions.length>0 && <span style={{fontSize:10, color:"#404040"}}>{g.conditions.length}</span>}
+              </div>
+              {doms.length > 0 && (
+                <div style={{ display:"flex", flexWrap:"wrap", gap:3, marginTop:3 }}>
+                  {doms.map(dk => {
+                    const dc = DOMAIN_CONFIG[dk];
+                    return dc ? <span key={dk} style={{ fontSize:9, borderRadius:3, padding:"1px 5px",
+                      background: dc.color+"18", color: dc.color, border:`1px solid ${dc.color}33` }}>{dc.label}</span> : null;
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <button onClick={addGene} style={{ ...btn, margin:12, justifyContent:"center", background:"#0891b2", borderColor:"#0891b2", color:"#fff" }}>+ Add gene</button>
+    </aside>
+
+    {/* main */}
+    <main style={{ flex:1, overflowY:"auto" }}>
+      <div style={{ maxWidth:1100, margin:"0 auto", padding:24 }}>
+
+        {/* Gene title + controls */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+          <div>
+            <h1 style={{ fontSize:36, fontStyle:"italic", margin:"0 0 8px" }}>{active.name}</h1>
+            {!editing && domainBadges.length > 0 && (
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>{domainBadges}</div>
+            )}
+          </div>
+          <div style={{display:"flex", gap:8, alignItems:"center"}}>
+            {saving && <span style={{fontSize:11, color:"#525252"}}>saving…</span>}
+            <button onClick={()=>setEditing(e=>!e)} style={btn}>{editing?"Done":"Edit"}</button>
+          </div>
+        </div>
+
+        <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:24 }}>
+          {/* Left column */}
+          <section>
+            {/* Domain tagger (edit mode only) */}
+            {editing && (
+              <div style={{ marginBottom:20, padding:"14px 16px", background:"#111", border:"1px solid #262626", borderRadius:8 }}>
+                <DomainTagger domains={activeDomains} onChange={d => patch({ domains: d })} />
+              </div>
+            )}
+
+            {/* Normal expression image */}
+            <ImageSection
+              label="Normal Expression Pattern"
+              img={active.normalImg || ""}
+              caption={active.normalCaption || "Normal Expression Pattern"}
+              editing={editing}
+              onUpload={f => patch({ normalImg:f })}
+              onCaptionChange={v => patch({ normalCaption:v })}
+              placeholderH={200}
+            />
+
+            {/* Description */}
+            <div style={{ marginTop:20 }}>
+              {editing
+                ? <textarea value={active.summary||""} onChange={e=>patch({summary:e.target.value})} rows={5}
+                    placeholder="Description of gene function in the lateral line and phenotypes in knockouts/morpholino…"
+                    style={{ ...inp, lineHeight:1.5 }} />
+                : <p style={{ fontSize:14, lineHeight:1.6, color:"#d4d4d4", margin:0 }}>
+                    {active.summary || <span style={{color:"#333", fontStyle:"italic"}}>No description yet.</span>}</p>}
+            </div>
+
+            {/* Migration phenotype image */}
+            <ImageSection
+              label="Migration Phenotype (KO / Overexpression)"
+              img={active.migrationImg || ""}
+              caption={active.migrationCaption || "Migration Phenotype"}
+              editing={editing}
+              onUpload={f => patch({ migrationImg:f })}
+              onCaptionChange={v => patch({ migrationCaption:v })}
+              placeholderH={160}
+            />
+          </section>
+
+          {/* Right column: perturbations */}
+          <section>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+              <h2 style={{ fontSize:12, fontWeight:600, color:"#525252", textTransform:"uppercase", letterSpacing:"0.05em", margin:0 }}>Perturbations</h2>
+              {editing && <span onClick={addCondition} style={{ fontSize:12, color:"#22d3ee", cursor:"pointer" }}>+ add</span>}
+            </div>
+            <input value={permQuery} onChange={e=>setPermQuery(e.target.value)} placeholder="Search label, note, tags…"
+              style={{ ...inp, fontSize:12, marginBottom:8 }} />
+            <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginBottom:12 }}>
+              {SYSTEMS.map(s => {
+                const state = sysFilterState[s] || "all";
+                const isActive = activeSysName === s;
+                let bg = "transparent", border = "#333", color = "#525252";
+                if (isActive && state === "isolate") { border = "#0891b2"; bg = "#0891b2"; color = "#fff"; }
+                if (isActive && state === "up")      { border = "#16a34a"; bg = "#16a34a"; color = "#fff"; }
+                if (isActive && state === "down")    { border = "#dc2626"; bg = "#dc2626"; color = "#fff"; }
+                return (
+                  <span key={s} onClick={() => {
+                    setSysFilterState(prev => {
+                      const cur = prev[s] || "all";
+                      const next = FILTER_STATES[(FILTER_STATES.indexOf(cur) + 1) % FILTER_STATES.length];
+                      // only one system can be active at a time — clear others
+                      if (next === "all") return { ...prev, [s]: "all" };
+                      return { [s]: next };
+                    });
+                  }} style={{ fontSize:11, fontWeight: isActive?600:400, borderRadius:4, padding:"2px 8px", cursor:"pointer",
+                    border:"1px solid "+border, background:bg, color, transition:"all 0.15s" }}>
+                    {s}{isActive && state==="up" ? " ↑" : isActive && state==="down" ? " ↓" : ""}
+                  </span>
+                );
+              })}
+              {activeSysName && (
+                <span onClick={() => setSysFilterState({})} style={{ fontSize:11, borderRadius:4, padding:"2px 8px",
+                  cursor:"pointer", border:"1px solid #333", color:"#525252" }}>Reset</span>
+              )}
+            </div>
+
+            {(active.conditions||[]).length===0 &&
+              <p style={{ fontSize:12, color:"#333", fontStyle:"italic" }}>No perturbations yet.</p>}
+
+            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+              {Object.entries(grouped).map(([sys, items]) => (
+                <div key={sys}>
+                  <div style={{ display:"inline-block", fontSize:11, fontWeight:600, borderRadius:4,
+                    padding:"2px 8px", marginBottom:8,
+                    color:SYS_COLOR[sys].c, border:"1px solid "+SYS_COLOR[sys].b, background:SYS_COLOR[sys].bg }}>{sys}</div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                    {items.map(c => (
+                      <div key={c.id} style={{ borderRadius:8, border:"1px solid #1e1e1e", overflow:"hidden" }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 12px 0", gap:8 }}>
+                          {editing
+                            ? <input value={c.label} onChange={e=>updCond(c.id,{label:e.target.value})} style={{ ...inp, fontSize:14, fontWeight:500 }} />
+                            : <span style={{ fontSize:14, fontWeight:500, color:"#e5e5e5", display:"flex", alignItems:"center", gap:6 }}>
+                                {c.label}
+                                {c.direction === "up"   && <span style={{ fontSize:11, color:"#16a34a", fontWeight:700 }}>↑</span>}
+                                {c.direction === "down" && <span style={{ fontSize:11, color:"#dc2626", fontWeight:700 }}>↓</span>}
+                              </span>}
+                          {editing && <span onClick={()=>rmCond(c.id)} style={{ cursor:"pointer", color:"#525252" }}>×</span>}
+                        </div>
+                        {editing && (
+                          <div style={{ padding:"8px 12px", display:"flex", flexDirection:"column", gap:8 }}>
+                            <div style={{ display:"flex", gap:8 }}>
+                              <select value={c.system} onChange={e=>updCond(c.id,{system:e.target.value})} style={{ ...inp, fontSize:12, flex:1 }}>
+                                {SYSTEMS.map(s=><option key={s} value={s}>{s}</option>)}
+                              </select>
+                              <select value={c.direction||""} onChange={e=>updCond(c.id,{direction:e.target.value})} style={{ ...inp, fontSize:12, flex:1 }}>
+                                {DIRECTIONS.map(d=><option key={d} value={d}>{DIR_LABEL[d]}</option>)}
+                              </select>
+                            </div>
+                            <Upload small onDone={f=>updCond(c.id,{img:f})} />
+                          </div>
+                        )}
+                        <div style={{ padding:"4px 8px 8px" }}><ImgSlot src={c.img} placeholderH={80} /></div>
+                        {editing
+                          ? <div style={{ padding:"0 12px 8px", display:"flex", flexDirection:"column", gap:8 }}>
+                              <input value={c.note||""} onChange={e=>updCond(c.id,{note:e.target.value})} placeholder="Phenotype note (optional)" style={{ ...inp, fontSize:12 }} />
+                              <TagEditor tags={c.tags||[]} onChange={t=>updCond(c.id,{tags:t})} />
+                            </div>
+                          : <div style={{ padding:"0 12px 8px" }}>
+                              {c.note && <p style={{ fontSize:12, color:"#737373", margin:"0 0 4px" }}>{c.note}</p>}
+                              <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                                {(c.tags||[]).map(t=><span key={t} style={tagChip}>{t}</span>)}
+                              </div>
+                            </div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>);
+}
+
+const btn = { display:"flex", alignItems:"center", gap:4, border:"1px solid #333", borderRadius:6,
+  padding:"6px 12px", fontSize:13, background:"transparent", color:"#f5f5f5", cursor:"pointer" };
+const inp = { width:"100%", background:"#111", border:"1px solid #2a2a2a", borderRadius:6,
+  padding:"6px 10px", fontSize:14, color:"#f5f5f5", outline:"none" };
+const tagChip = { display:"flex", alignItems:"center", gap:4, background:"#1a1a1a", color:"#737373",
+  borderRadius:4, padding:"2px 6px", fontSize:11 };
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>

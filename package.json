@@ -1,0 +1,13 @@
+{
+  "name": "pll-primordium-db",
+  "version": "0.1.0",
+  "description": "Local zebrafish posterior lateral line primordium gene expression database",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

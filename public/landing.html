@@ -1,0 +1,388 @@
+<!-- public/landing.html -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pLL Primordium Gene Expression Atlas</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0a0a0a; color: #f5f5f5; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; }
+
+.page { min-height: 100vh; padding: 48px 24px 72px; }
+
+.header { text-align: center; margin-bottom: 8px; }
+.header .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #22d3ee; margin-bottom: 12px; }
+.header h1 { font-size: 30px; font-weight: 500; color: #f5f5f5; margin-bottom: 8px; }
+.header p { font-size: 14px; color: #525252; }
+.table-link {
+  display: inline-block; margin-top: 14px; font-size: 13px;
+  color: #22d3ee; text-decoration: none; border: 1px solid #1c3a3f;
+  border-radius: 8px; padding: 6px 14px; transition: border-color 0.15s, background 0.15s;
+}
+.table-link:hover { border-color: #22d3ee; background: #0d1f21; }
+
+.search-wrap { max-width: 580px; margin: 32px auto 0; position: relative; }
+.search-wrap input {
+  width: 100%; background: #111; border: 1px solid #2a2a2a;
+  border-radius: 14px; padding: 15px 22px 15px 50px;
+  font-size: 15px; color: #f5f5f5; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.search-wrap input:focus { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34,211,238,0.08); }
+.search-wrap input::placeholder { color: #404040; }
+.search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #404040; font-size: 20px; pointer-events: none; }
+
+.results {
+  max-width: 580px; margin: 6px auto 0;
+  background: #141414; border: 1px solid #262626;
+  border-radius: 12px; overflow: hidden; display: none;
+  position: absolute; left: 0; right: 0; z-index: 20;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.result-item {
+  padding: 10px 22px; font-size: 13px; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #1c1c1c; color: #d4d4d4; font-style: italic;
+  transition: background 0.1s;
+}
+.result-item:last-child { border-bottom: none; }
+.result-item:hover { background: #1c1c1c; color: #f5f5f5; }
+.domain-badge {
+  font-size: 10px; font-style: normal; padding: 2px 9px;
+  border-radius: 4px; font-weight: 600; white-space: nowrap;
+}
+
+.diagram-section { margin: 52px auto 0; max-width: 700px; position: relative; }
+.diagram-hint { text-align: center; font-size: 11px; color: #2e2e2e; margin-bottom: 14px; letter-spacing: 0.04em; }
+
+.tooltip {
+  position: absolute; background: #181818; border: 1px solid #303030;
+  border-radius: 10px; padding: 11px 15px; pointer-events: none;
+  font-size: 12px; color: #f5f5f5; min-width: 170px; max-width: 220px;
+  display: none; z-index: 30;
+}
+.tooltip strong { display: block; font-size: 13px; margin-bottom: 5px; }
+.tooltip .genes { color: #737373; font-style: italic; line-height: 1.5; }
+
+.gene-list-section { max-width: 700px; margin: 36px auto 0; display: none; }
+.gene-list-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 1px solid #1e1e1e;
+}
+.domain-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.gene-list-header h3 { font-size: 15px; font-weight: 500; }
+.domain-desc { font-size: 12px; color: #525252; margin-left: auto; }
+.gene-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.gene-chip {
+  background: #111; border: 1px solid #262626;
+  border-radius: 8px; padding: 6px 14px;
+  font-size: 13px; font-style: italic; color: #d4d4d4;
+  cursor: pointer; text-decoration: none; display: inline-block;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.gene-chip:hover { background: #1a1a1a; }
+</style>
+
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">Zebrafish · Posterior Lateral Line</div>
+    <h1>pLL Primordium Gene Expression Atlas</h1>
+    <p>Click a domain to explore expressed genes · Search by gene name</p>
+    <a href="/table" class="table-link">Perturbation table →</a>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search genes — wnt10a, fgf3, cxcr4b…" autocomplete="off" />
+    <div class="results" id="results"></div>
+  </div>
+
+  <div class="diagram-section">
+    <p class="diagram-hint">Hover to preview · Click to explore</p>
+
+    <svg width="100%" viewBox="0 0 700 220" role="img" id="primordium-svg" style="display:block; overflow:visible;">
+      <title>pLL primordium domain schematic</title>
+      <desc>Primordium domains from left to right: Deposited neuromast, Trailing domain containing Mature neuromast, Middle domain containing Developing neuromast, Leading domain containing Proto-neuromast, each with a clickable hair cell progenitor at its center.</desc>
+      <defs>
+        <!-- Clip the interior domains to the main ellipse -->
+        <clipPath id="ellipseClip">
+          <ellipse cx="430" cy="108" rx="248" ry="88"/>
+        </clipPath>
+      </defs>
+
+      <!-- ═══ DEPOSITED NEUROMAST — orange circle, left, partially outside ellipse ═══ -->
+      <g id="dom-deposited" class="dom" data-key="deposited" style="cursor:pointer">
+        <circle cx="92" cy="108" r="80" fill="#7a3800" fill-opacity="0.5" stroke="#f97316" stroke-width="1.5"/>
+        <circle id="hl-deposited" class="hl-ring" cx="92" cy="108" r="80" fill="none" stroke="#f97316" stroke-width="3" opacity="0"/>
+      </g>
+
+      <!-- Hair cell progenitor — deposited (largest, 25% of deposited radius) -->
+      <g id="dom-hcp-deposited" class="dom hcp" data-key="hcp" style="cursor:pointer">
+        <circle cx="92" cy="108" r="20" fill="#18181b" fill-opacity="0.92" stroke="#52525b" stroke-width="1.5"/>
+        <circle id="hl-hcp-deposited" class="hl-ring" cx="92" cy="108" r="20" fill="none" stroke="#a1a1aa" stroke-width="2.5" opacity="0"/>
+      </g>
+
+      <!-- ═══ MAIN PRIMORDIUM ELLIPSE — split into thirds: trailing / middle / leading ═══ -->
+      <g clip-path="url(#ellipseClip)">
+        <!-- trailing third (contains Mature neuromast) -->
+        <g id="dom-trailing" class="dom" data-key="trailing" style="cursor:pointer">
+          <rect x="182" y="20" width="165" height="176" fill="#3d0f33" fill-opacity="0.35"/>
+          <rect id="hl-trailing" class="hl-ring" x="182" y="20" width="165" height="176" fill="none" stroke="#e879f9" stroke-width="3" opacity="0"/>
+        </g>
+        <!-- middle third (contains Developing neuromast) -->
+        <g id="dom-middle" class="dom" data-key="middle" style="cursor:pointer">
+          <rect x="347" y="20" width="165" height="176" fill="#0c3320" fill-opacity="0.35"/>
+          <rect id="hl-middle" class="hl-ring" x="347" y="20" width="165" height="176" fill="none" stroke="#4ade80" stroke-width="3" opacity="0"/>
+        </g>
+        <!-- leading third (contains Proto-neuromast) -->
+        <g id="dom-leading" class="dom" data-key="leading" style="cursor:pointer">
+          <rect x="512" y="20" width="166" height="176" fill="#1f3a1a" fill-opacity="0.3"/>
+          <rect x="512" y="20" width="166" height="176" fill="#f59e0b" fill-opacity="0.12"/>
+          <rect id="hl-leading" class="hl-ring" x="512" y="20" width="166" height="176" fill="none" stroke="#f59e0b" stroke-width="3" opacity="0"/>
+        </g>
+        <!-- third divider lines -->
+        <line x1="347" y1="22" x2="347" y2="194" stroke="#2a3a3a" stroke-width="1" stroke-dasharray="3,3" style="pointer-events:none"/>
+        <line x1="512" y1="22" x2="512" y2="194" stroke="#2a3a3a" stroke-width="1" stroke-dasharray="3,3" style="pointer-events:none"/>
+      </g>
+      <ellipse cx="430" cy="108" rx="248" ry="88" fill="none" stroke="#2a3a3a" stroke-width="1.5" style="pointer-events:none"/>
+
+      <!-- Connecting lines from deposited to ellipse (like image) -->
+      <path d="M 155 78 Q 182 86 182 108 Q 182 130 155 138" fill="none" stroke="#2a3a3a" stroke-width="1" style="pointer-events:none"/>
+
+      <!-- ═══ MATURE NEUROMAST — magenta/pink, leftmost inside ellipse ═══ -->
+      <g id="dom-mature" class="dom" data-key="mature" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <ellipse cx="266" cy="108" rx="74" ry="78" fill="#6b0050" fill-opacity="0.55" stroke="#e879f9" stroke-width="1.5"/>
+        <ellipse id="hl-mature" class="hl-ring" cx="266" cy="108" rx="74" ry="78" fill="none" stroke="#e879f9" stroke-width="3" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- Hair cell progenitor — mature (large) -->
+      <g id="dom-hcp-mature" class="dom hcp" data-key="hcp" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <circle cx="266" cy="108" r="15" fill="#18181b" fill-opacity="0.8" stroke="#52525b" stroke-width="1.2"/>
+        <circle id="hl-hcp-mature" class="hl-ring" cx="266" cy="108" r="15" fill="none" stroke="#a1a1aa" stroke-width="2.5" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- ═══ DEVELOPING NEUROMAST — green, sits inside the new Middle third ═══ -->
+      <g id="dom-developing" class="dom" data-key="developing" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <ellipse cx="390" cy="108" rx="66" ry="70" fill="#064e2a" fill-opacity="0.6" stroke="#4ade80" stroke-width="1.5"/>
+        <ellipse id="hl-developing" class="hl-ring" cx="390" cy="108" rx="66" ry="70" fill="none" stroke="#4ade80" stroke-width="3" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- Hair cell progenitor — developing (medium) -->
+      <g id="dom-hcp-developing" class="dom hcp" data-key="hcp" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <circle cx="390" cy="108" r="10" fill="#18181b" fill-opacity="0.65" stroke="#52525b" stroke-width="1"/>
+        <circle id="hl-hcp-developing" class="hl-ring" cx="390" cy="108" r="10" fill="none" stroke="#a1a1aa" stroke-width="2" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- ═══ PROTO-NEUROMAST — blue, sits inside the new Leading third ═══ -->
+      <g id="dom-proto" class="dom" data-key="proto" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <ellipse cx="500" cy="108" rx="52" ry="56" fill="#082044" fill-opacity="0.7" stroke="#38bdf8" stroke-width="1.5"/>
+        <ellipse id="hl-proto" class="hl-ring" cx="500" cy="108" rx="52" ry="56" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- Hair cell progenitor — proto (smallest, faintest — just emerging) -->
+      <g id="dom-hcp-proto" class="dom hcp" data-key="hcp" style="cursor:pointer" clip-path="url(#ellipseClip)">
+        <circle cx="500" cy="108" r="5" fill="#18181b" fill-opacity="0.45" stroke="#52525b" stroke-width="0.75"/>
+        <circle id="hl-hcp-proto" class="hl-ring" cx="500" cy="108" r="5" fill="none" stroke="#a1a1aa" stroke-width="1.5" opacity="0" clip-path="url(#ellipseClip)"/>
+      </g>
+
+      <!-- ═══ LABELS ═══ -->
+      <!-- Deposited (hcp r=20, top edge ~y=88) -->
+      <text x="92" y="76" text-anchor="middle" font-size="12" font-family="system-ui,sans-serif" fill="#fb923c" font-weight="500" style="pointer-events:none">Deposited</text>
+      <text x="92" y="90" text-anchor="middle" font-size="12" font-family="system-ui,sans-serif" fill="#fb923c" font-weight="500" style="pointer-events:none">neuromast</text>
+
+      <!-- Mature (hcp r=15, top edge ~y=93) -->
+      <text x="266" y="84" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#e879f9" font-weight="500" style="pointer-events:none">Mature</text>
+      <text x="266" y="97" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#e879f9" font-weight="500" style="pointer-events:none">neuromast</text>
+
+      <!-- Developing (hcp r=10, top edge ~y=98) -->
+      <text x="390" y="89" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#4ade80" font-weight="500" style="pointer-events:none">Developing</text>
+      <text x="390" y="102" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#4ade80" font-weight="500" style="pointer-events:none">neuromast</text>
+
+      <!-- Proto (hcp r=5, top edge ~y=103) -->
+      <text x="500" y="95" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#38bdf8" font-weight="500" style="pointer-events:none">Proto-</text>
+      <text x="500" y="108" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="#38bdf8" font-weight="500" style="pointer-events:none">neuromast</text>
+
+      <!-- Background third-band labels -->
+      <text x="264" y="34" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" fill="#6b5560" font-weight="500" letter-spacing="0.04em" style="pointer-events:none">TRAILING DOMAIN</text>
+      <text x="429" y="30" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" fill="#4a6b56" font-weight="500" letter-spacing="0.04em" style="pointer-events:none">MIDDLE DOMAIN</text>
+      <text x="595" y="34" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" fill="#8a7340" font-weight="500" letter-spacing="0.04em" style="pointer-events:none">LEADING DOMAIN</text>
+
+      <!-- Direction indicator -->
+      <text x="182" y="204" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" fill="#2e2e2e">← anterior</text>
+      <text x="590" y="204" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" fill="#2e2e2e">posterior →</text>
+    </svg>
+
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <div class="gene-list-section" id="gene-list">
+    <div class="gene-list-header">
+      <div class="domain-dot" id="list-dot"></div>
+      <h3 id="list-title"></h3>
+      <span class="domain-desc" id="list-desc"></span>
+    </div>
+    <div class="gene-grid" id="gene-grid"></div>
+  </div>
+</div>
+
+<script>
+const DOMAINS = {
+  deposited: {
+    label: "Deposited neuromast",
+    color: "#f97316",
+    desc: "Anchored neuromast maturation"
+  },
+  trailing: {
+    label: "Trailing domain",
+    color: "#e879f9",
+    desc: "Posterior-most third of the primordium, containing the Mature neuromast"
+  },
+  mature: {
+    label: "Mature neuromast",
+    color: "#e879f9",
+    desc: "Hair cell differentiation"
+  },
+  middle: {
+    label: "Middle domain",
+    color: "#4ade80",
+    desc: "Central third of the primordium, containing the Developing neuromast"
+  },
+  developing: {
+    label: "Developing neuromast",
+    color: "#4ade80",
+    desc: "FGF & BMP patterning"
+  },
+  leading: {
+    label: "Leading domain",
+    color: "#f59e0b",
+    desc: "Anterior-most third of the primordium — chemokine-driven migration front, containing the Proto-neuromast"
+  },
+  proto: {
+    label: "Proto-neuromast",
+    color: "#38bdf8",
+    desc: "Fate specification via Notch signalling"
+  },
+  hcp: {
+    label: "Hair cell progenitor",
+    color: "#a1a1aa",
+    desc: "Progenitor cells that differentiate into hair cells as the neuromast matures"
+  }
+};
+
+// Live gene list, loaded from the server (no hardcoded gene names)
+let ALL_GENES = [];
+
+function loadGenes() {
+  return fetch('/api/genes').then(r => r.json()).then(genes => {
+    ALL_GENES = genes;
+    return genes;
+  });
+}
+
+function geneDomains(gene) {
+  return gene.domains || [];
+}
+
+function genesInDomain(key) {
+  return ALL_GENES.filter(g => geneDomains(g).includes(key));
+}
+
+// ── Search ──
+const searchEl = document.getElementById('search');
+const resultsEl = document.getElementById('results');
+
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.trim().toLowerCase();
+  if (!q) { resultsEl.style.display = 'none'; return; }
+  const hits = ALL_GENES.filter(g => g.name.toLowerCase().includes(q)).slice(0, 10);
+  if (!hits.length) { resultsEl.style.display = 'none'; return; }
+  resultsEl.innerHTML = hits.map(g => {
+    const doms = geneDomains(g);
+    const badge = doms.length
+      ? doms.map(dk => {
+          const d = DOMAINS[dk];
+          return d ? `<span class="domain-badge" style="background:${d.color}22;color:${d.color};border:1px solid ${d.color}55">${d.label}</span>` : '';
+        }).join(' ')
+      : `<span class="domain-badge" style="background:#1e1e1e;color:#525252;border:1px solid #303030">unassigned</span>`;
+    return `<div class="result-item" onclick="window.location='/gene/${g.id}'">${g.name} ${badge}</div>`;
+  }).join('');
+  resultsEl.style.display = 'block';
+});
+
+document.addEventListener('click', e => {
+  if (!searchEl.contains(e.target) && !resultsEl.contains(e.target))
+    resultsEl.style.display = 'none';
+});
+
+// ── Domain interactions ──
+let activeDomain = null;
+let activeEl = null;
+
+document.querySelectorAll('.dom').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    setHighlight(el, true);
+    showTooltip(el);
+  });
+  el.addEventListener('mouseleave', () => {
+    if (el !== activeEl) setHighlight(el, false);
+    hideTooltip();
+  });
+  el.addEventListener('click', () => {
+    // clear all highlights first, then set only the clicked element's
+    document.querySelectorAll('.dom').forEach(other => setHighlight(other, false));
+    activeDomain = el.dataset.key;
+    activeEl = el;
+    setHighlight(el, true);
+    showGeneList(el.dataset.key);
+  });
+});
+
+// Each .dom group's highlight ring is its child element with class "hl-ring"
+function setHighlight(el, on) {
+  const ring = el.querySelector('.hl-ring');
+  if (ring) ring.setAttribute('opacity', on ? '1' : '0');
+}
+
+const tooltip = document.getElementById('tooltip');
+function showTooltip(domEl) {
+  const key = domEl.dataset.key;
+  const d = DOMAINS[key];
+  const genes = genesInDomain(key).map(g => g.name).sort();
+  const preview = genes.length ? genes.slice(0,6).join(', ') + (genes.length > 6 ? '…' : '') : 'No genes tagged yet';
+  tooltip.innerHTML = `<strong style="color:${d.color}">${d.label}</strong><span class="genes">${preview}</span>`;
+  tooltip.style.display = 'block';
+  const section = document.querySelector('.diagram-section');
+  const sr = section.getBoundingClientRect();
+  const er = domEl.getBoundingClientRect();
+  let left = er.left - sr.left + er.width/2 - 85;
+  let top  = er.top  - sr.top  - 80;
+  if (left < 0) left = 4;
+  if (left + 220 > section.offsetWidth) left = section.offsetWidth - 224;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top  = top  + 'px';
+}
+function hideTooltip() { tooltip.style.display = 'none'; }
+
+function showGeneList(key) {
+  const d = DOMAINS[key];
+  const genes = genesInDomain(key).slice().sort((a, b) => a.name.localeCompare(b.name));
+  document.getElementById('list-dot').style.background = d.color;
+  document.getElementById('list-title').textContent = d.label;
+  document.getElementById('list-title').style.color = d.color;
+  document.getElementById('list-desc').textContent = d.desc;
+  document.getElementById('gene-grid').innerHTML = genes.length
+    ? genes.map(g =>
+        `<a class="gene-chip" href="/gene/${g.id}" style="--hc:${d.color};border-color:#262626"
+           onmouseenter="this.style.borderColor='${d.color}';this.style.color='${d.color}'"
+           onmouseleave="this.style.borderColor='#262626';this.style.color=''">${g.name}</a>`
+      ).join('')
+    : `<p style="font-size:13px;color:#404040;font-style:italic">No genes tagged to this domain yet.</p>`;
+  const section = document.getElementById('gene-list');
+  section.style.display = 'block';
+  section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Load gene data on page load
+loadGenes();
+</script>
+

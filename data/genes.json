@@ -1,0 +1,1010 @@
+[
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading"
+    ],
+    "id": "wnt10a",
+    "name": "wnt10a",
+    "summary": "Secreted wnt ligand produced in the leading domain of primordium.",
+    "normalImg": "73fc4b3576c09b72.png",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "7150943aaf5124d5.png",
+    "migrationCaption": "Shorter Migration Distance in Morphants",
+    "domains": [
+      "leading",
+      "proto"
+    ],
+    "id": "lef1",
+    "name": "lef1",
+    "summary": "Enables sequence-specific DNA binding activity downstream of WNT. Involved in regulation of transcription by RNA polymerase II. Acts upstream of or within several processes, including fin development; fin regeneration; and forebrain development. Predicted to be located in nucleoplasm. Predicted to be part of beta-catenin-TCF complex.",
+    "normalImg": "aac112c13caff33b.png",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": [
+      {
+        "direction": "down",
+        "id": "c1781368055976",
+        "label": "SU5402 10um",
+        "system": "FGF",
+        "img": "48b8c05178a85ec5.png",
+        "note": "FGF Inhibition expands lef1/wnt",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781368137221",
+        "label": "HS:ΔNtcf",
+        "system": "Wnt",
+        "img": "8495689ae64cbc23.png",
+        "note": "Wnt Inhibition",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781368239430",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "3753fe1373f091c6.png",
+        "note": "Wnt ligand competitive inhibition",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781382195123",
+        "label": "Snai1b MO",
+        "system": "Other",
+        "img": "462fd278f9d29be4.png",
+        "note": "Expanded Domain in Snai1b MO",
+        "tags": []
+      },
+      {
+        "direction": "up",
+        "id": "c1781382234502",
+        "label": "Bio",
+        "system": "Wnt",
+        "img": "4f32ff68130e04e0.png",
+        "note": "Expanded Wnt/FGF Activator Drug",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781382275393",
+        "label": "IWR",
+        "system": "Wnt",
+        "img": "512659b472935692.png",
+        "note": "Reduced Domain with Wnt Inhibitor",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781382304226",
+        "label": "Rspo3 MO",
+        "system": "Other",
+        "img": "b2f9178a1e16ac1a.png",
+        "note": "Rspo3 MO",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781382340632",
+        "label": "Fgf10a MO",
+        "system": "FGF",
+        "img": "f37a0c5d6820c12f.png",
+        "note": "Expanded Wnt Domain",
+        "tags": []
+      },
+      {
+        "direction": "up",
+        "id": "c1781382385809",
+        "label": "Apc Mcr",
+        "system": "Wnt",
+        "img": "20969dd70a9a88fc.png",
+        "note": "Constitutively Active Wnt",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading",
+      "proto"
+    ],
+    "id": "bmp5",
+    "name": "bmp5",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading",
+      "proto"
+    ],
+    "id": "bmp4",
+    "name": "bmp4",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading",
+      "proto"
+    ],
+    "id": "bmp2b",
+    "name": "bmp2b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading"
+    ],
+    "id": "axin2",
+    "name": "axin2",
+    "summary": "Predicted to enable several functions, including I-SMAD binding activity (BMP); beta-catenin binding activity; and enzyme binding activity. Involved in negative regulation of canonical Wnt signaling pathway.",
+    "normalImg": "565a5c6ae93407a9.png",
+    "normalCaption": "Leading Domain",
+    "conditions": [
+      {
+        "direction": "up",
+        "id": "c1781384714509",
+        "label": "Apc Mcr",
+        "system": "Wnt",
+        "img": "5d3a7fe607c0f7dd.png",
+        "note": "Wnt signaling activation - Expands",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781384752382",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "8d3ac759868f3e1c.png",
+        "note": "Wnt competitive inhibitor - Expression disappears",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "il17rd",
+    "name": "il17rd",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "anos1a",
+    "name": "anos1a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "anos1b",
+    "name": "anos1b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading",
+      "proto"
+    ],
+    "id": "dusp6",
+    "name": "dusp6",
+    "summary": "Inhibits modErk activity (a component downstream of FGF signaling) via activation of BMP signaling. ",
+    "normalImg": "05eb3aefb3203b18.png",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": [
+      {
+        "direction": "down",
+        "id": "c1781384260917",
+        "label": "Su5402",
+        "system": "FGF",
+        "img": "d7e790fe69d1a036.png",
+        "note": "FGF Receptor Inhibitor - Shrinks to tip",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781384333534",
+        "label": "Lef1 MO",
+        "system": "Wnt",
+        "img": "bffefac3cecb075b.png",
+        "note": "Transcription factor downstream of Wnt - Leading tip expression lost",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781384400385",
+        "label": "Lef1 MO + Su5402",
+        "system": "Other",
+        "img": "de1109b95f29dadd.png",
+        "note": "Expression absent",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "dkk1b",
+    "name": "dkk1b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "dkk2",
+    "name": "dkk2",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "fgf3",
+    "name": "fgf3",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "c2524a25e62b8a0b.png",
+    "migrationCaption": "Delayed initial neuromast deposition",
+    "domains": [
+      "leading"
+    ],
+    "id": "fgf10a",
+    "name": "fgf10a",
+    "summary": "FGF ligand secreted by cells with high Wnt signaling activity. ",
+    "normalImg": "fd6e7828f8139647.png",
+    "normalCaption": "Leading Domain",
+    "conditions": [
+      {
+        "direction": "down",
+        "id": "c1781383698548",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "deaa13659fe831f0.png",
+        "note": "Expression dissapears",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781383727558",
+        "label": "IWR",
+        "system": "Wnt",
+        "img": "3893bd7254c95c7d.png",
+        "note": "",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "fgfr1",
+    "name": "fgfr1",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "mature",
+      "developing",
+      "proto"
+    ],
+    "id": "etv4",
+    "name": "etv4",
+    "summary": "Transcription factor downstream of FGF signaling. ",
+    "normalImg": "a5945826543a6149.png",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781371556005",
+        "label": "SU5402",
+        "system": "FGF",
+        "img": "5831c5eaf3b3dc42.png",
+        "note": "FGF Receptor Drug Inhibition",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371585660",
+        "label": "HS:DN-fgfr1",
+        "system": "FGF",
+        "img": "673f47705cbce432.png",
+        "note": "Dominant Negative FGF receptor",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371636333",
+        "label": "Snai1b-MO",
+        "system": "Other",
+        "img": "7aa0cb181e8a04e7.png",
+        "note": "Expression Shifted Trailing",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371682598",
+        "label": "IWR",
+        "system": "Wnt",
+        "img": "7cf5d6103aafbc76.png",
+        "note": "",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371736287",
+        "label": "FGF10a MO",
+        "system": "FGF",
+        "img": "427b602df9fb252e.png",
+        "note": "Reduced Expression Levels",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371771166",
+        "label": "FGF10a MO + IWR",
+        "system": "FGF",
+        "img": "82277182b9aa4c7a.png",
+        "note": "Recovered Expression Pattern With Both",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371833145",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "58feb3eb5f57cd71.png",
+        "note": "No Expression With Expanded WNT/Lef1",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "mature",
+      "deposited"
+    ],
+    "id": "ackr3b",
+    "name": "ackr3b",
+    "summary": "Locally degrades the chemokine cxcl12a produced by the surrounding environment leading to higher concentration always present in front of primordium to migrate towards.  ",
+    "normalImg": "e3b846ef2c8831b9.png",
+    "normalCaption": "Most trailing region of primordium",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781383465547",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "661e998eb2f419e7.png",
+        "note": "",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781383481050",
+        "label": "HS:dkk1b (6 hours)",
+        "system": "Wnt",
+        "img": "efcd1dc6a1a0726c.png",
+        "note": "Eventually will expand to leading domain",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "notch1a",
+    "name": "notch1a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "notch3",
+    "name": "notch3",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "deltaA",
+    "name": "deltaA",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "deltaB",
+    "name": "deltaB",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "deltaC",
+    "name": "deltaC",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "deltaD",
+    "name": "deltaD",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "jag1b",
+    "name": "jag1b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "jag2b",
+    "name": "jag2b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "her4",
+    "name": "her4",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "hey1",
+    "name": "hey1",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading"
+    ],
+    "id": "snai1b",
+    "name": "snai1b",
+    "summary": "Pro-migratory transcription factor. Likes high cxcr4b signaling activity?",
+    "normalImg": "f66a7436ec61b52f.png",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781382766618",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "ae2da902eb760bab.png",
+        "note": "Expanded",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781382810461",
+        "label": "Bio",
+        "system": "Wnt",
+        "img": "04a19cd327b28849.png",
+        "note": "Wnt/FGF Activating Drug",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781382849671",
+        "label": "HS:DN-fgfr1",
+        "system": "FGF",
+        "img": "3aabb80c995f9238.png",
+        "note": "Dominant Negative FGF Receptor",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781382885613",
+        "label": "Su5402",
+        "system": "FGF",
+        "img": "6f95b8cf0cdcb870.png",
+        "note": "FGF Receptor Inhibitor",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "atoh1a",
+    "name": "atoh1a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "sox1a",
+    "name": "sox1a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "sox2",
+    "name": "sox2",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "sox3",
+    "name": "sox3",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "hmx2",
+    "name": "hmx2",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "hmx3a",
+    "name": "hmx3a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading"
+    ],
+    "id": "hoxb8a",
+    "name": "hoxb8a",
+    "summary": "Transcription factor that promotes cxcr4b expression",
+    "normalImg": "7bf2a8c600533ec3.png",
+    "normalCaption": "Leading Domain",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781383586323",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "8507b097a367814c.png",
+        "note": "Requires Wnt Signaling",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "hoxb6a",
+    "name": "hoxb6a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "tfap2a",
+    "name": "tfap2a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "tfap2c",
+    "name": "tfap2c",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "six1b",
+    "name": "six1b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "six2a",
+    "name": "six2a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "six2b",
+    "name": "six2b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "six4b",
+    "name": "six4b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "kirrel3l",
+    "name": "kirrel3l",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "twf2b",
+    "name": "twf2b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "kremen1",
+    "name": "kremen1",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "cldnb",
+    "name": "cldnb",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "cldn7b",
+    "name": "cldn7b",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "developing",
+      "proto",
+      "leading"
+    ],
+    "id": "cxcr4b",
+    "name": "cxcr4b",
+    "summary": "chemokine (C-X-C motif), receptor 4b. Expressed in all but depositing domains of neuromast.",
+    "normalImg": "0f922a7074a23916.png",
+    "normalCaption": "Throughout Migrating Primordium",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781371183433",
+        "label": "HS:dkk1b",
+        "system": "Wnt",
+        "img": "dbe6e4c7548d1ee1.png",
+        "note": "Wnt Competitive Inhibitor",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371242820",
+        "label": "HS:dkk1b (6 hours)",
+        "system": "Wnt",
+        "img": "5997f628b95a482e.png",
+        "note": "Wnt Competitive Inhibitor",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781371286239",
+        "label": "HS:dkk1b (6 hours) + Hoxb8a-VP16",
+        "system": "Other",
+        "img": "983bc6caadfe1f61.png",
+        "note": "CA Hoxb8a recovers dkk1b overexpression",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "tgfb1a",
+    "name": "tgfb1a",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "eya1",
+    "name": "eya1",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "eya2",
+    "name": "eya2",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "eya4",
+    "name": "eya4",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [],
+    "id": "ttll10",
+    "name": "ttll10",
+    "summary": "",
+    "normalImg": "",
+    "normalCaption": "Normal Expression Pattern",
+    "conditions": []
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "mature",
+      "deposited"
+    ],
+    "id": "atoh1b",
+    "name": "atoh1b",
+    "summary": "Activated by Atoh1a activity. In most mature neuromast.",
+    "normalImg": "4e80320b02545298.png",
+    "normalCaption": "Hair Cell Progenitor in Most Mature Primordium Neuromast",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781383057268",
+        "label": "BCI",
+        "system": "Other",
+        "img": "5e567e01464ac107.png",
+        "note": "",
+        "tags": []
+      },
+      {
+        "direction": "down",
+        "id": "c1781383057651",
+        "label": "IWR",
+        "system": "Wnt",
+        "img": "f54f66c6c052472e.png",
+        "note": "Additional atoh1b spot in primordium",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "migrationImg": "",
+    "migrationCaption": "Migration Phenotype",
+    "domains": [
+      "leading"
+    ],
+    "id": "rspo3",
+    "name": "rspo3",
+    "summary": "Enable frizzled binding activity (receptor Wnt ligand binds).",
+    "normalImg": "f4aabaa7f57b32a0.png",
+    "normalCaption": "Leading Domain",
+    "conditions": [
+      {
+        "direction": "",
+        "id": "c1781383913626",
+        "label": "Su5402",
+        "system": "FGF",
+        "img": "3695168e6cebb99b.png",
+        "note": "FGF Receptor Inhibition - Expanded Domain",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781383952997",
+        "label": "Lef1 MO",
+        "system": "Wnt",
+        "img": "46aff04209f139aa.png",
+        "note": "",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781383976201",
+        "label": "Apc Mcr",
+        "system": "Wnt",
+        "img": "3c85f7d74b519b4f.png",
+        "note": "Overactivation of Wnt Signaling - Domain Expands",
+        "tags": []
+      },
+      {
+        "direction": "",
+        "id": "c1781384014748",
+        "label": "HS:ΔNtcf",
+        "system": "Wnt",
+        "img": "37a8b1d5684bb3ae.png",
+        "note": "Wnt Inhibition - Expression goes away",
+        "tags": []
+      }
+    ]
+  }
+]

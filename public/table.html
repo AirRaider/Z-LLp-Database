@@ -1,0 +1,201 @@
+<!-- public/table.html -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pLL Primordium — Perturbation Table</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+         background: #0a0a0a; color: #f5f5f5; }
+  input, button { font-family: inherit; }
+</style>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+// Columns in display order. Each maps to a {system, direction} filter, except "wt" and "other".
+const COLUMNS = [
+  { key: "wt",       label: "WT" },
+  { key: "wnt_up",   label: "Wnt↑",   system: "Wnt",   direction: "up"   },
+  { key: "wnt_down", label: "Wnt↓",   system: "Wnt",   direction: "down" },
+  { key: "fgf_up",   label: "FGF↑",   system: "FGF",   direction: "up"   },
+  { key: "fgf_down", label: "FGF↓",   system: "FGF",   direction: "down" },
+  { key: "notch_up", label: "Notch↑", system: "Notch", direction: "up"   },
+  { key: "notch_down", label: "Notch↓", system: "Notch", direction: "down" },
+  { key: "bmp_up",   label: "BMP↑",   system: "BMP",   direction: "up"   },
+  { key: "bmp_down", label: "BMP↓",   system: "BMP",   direction: "down" },
+  { key: "other",    label: "Other",  system: "Other" },
+];
+
+const imgUrl = (f) => f ? (f.startsWith("http") || f.startsWith("/") ? f : "/images/" + f) : "";
+
+function ImgSlot({ src }) {
+  if (src) return <img src={imgUrl(src)} style={{ width:"100%", height:"auto", display:"block", borderRadius:4 }} />;
+  return <div style={{ width:"100%", height:64, background:"#1a1a1a", border:"1px dashed #333",
+    borderRadius:4, display:"flex", alignItems:"center", justifyContent:"center", color:"#404040", fontSize:10 }}>—</div>;
+}
+
+// A cell that may contain 0, 1, or many perturbation images — cycles through them
+function Cell({ items, isWT, wtImg, wtCaption }) {
+  const [idx, setIdx] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  if (isWT) {
+    return (
+      <div style={{ minWidth:110 }}>
+        <ImgSlot src={wtImg} />
+        {wtImg && <p style={{ fontSize:10, color:"#525252", margin:"4px 0 0", textAlign:"center" }}>{wtCaption || "Normal"}</p>}
+      </div>
+    );
+  }
+
+  if (!items || items.length === 0) {
+    return <div style={{ minWidth:110 }}><ImgSlot src="" /></div>;
+  }
+
+  const cur = items[idx % items.length];
+
+  return (
+    <div style={{ minWidth:110 }}>
+      <div style={{ position:"relative" }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        <ImgSlot src={cur.img} />
+        {items.length > 1 && (
+          <>
+            <button onClick={() => setIdx(i => (i - 1 + items.length) % items.length)}
+              style={navBtnStyle("left", hover)}>‹</button>
+            <button onClick={() => setIdx(i => (i + 1) % items.length)}
+              style={navBtnStyle("right", hover)}>›</button>
+          </>
+        )}
+      </div>
+      <p style={{ fontSize:10, color:"#737373", margin:"4px 0 0", textAlign:"center",
+        whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }} title={cur.label}>
+        {cur.label}
+      </p>
+      {items.length > 1 && (
+        <div style={{ display:"flex", justifyContent:"center", gap:3, marginTop:3 }}>
+          {items.map((_, i) => (
+            <span key={i} onClick={() => setIdx(i)} style={{
+              width:5, height:5, borderRadius:"50%", cursor:"pointer",
+              background: i === (idx % items.length) ? "#22d3ee" : "#333"
+            }} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function navBtnStyle(side, visible) {
+  return {
+    position:"absolute", top:"50%", [side]:2, transform:"translateY(-50%)",
+    width:18, height:18, borderRadius:"50%", border:"none", cursor:"pointer",
+    background:"rgba(0,0,0,0.6)", color:"#f5f5f5", fontSize:12, lineHeight:1,
+    display:"flex", alignItems:"center", justifyContent:"center", padding:0,
+    opacity: visible ? 1 : 0, transition:"opacity 0.15s", pointerEvents: visible ? "auto" : "none",
+  };
+}
+
+function App() {
+  const [genes, setGenes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    fetch("/api/genes").then(r => r.json()).then(gs => { setGenes(gs); setLoading(false); });
+  }, []);
+
+  const filtered = useMemo(() =>
+    genes.filter(g => g.name.toLowerCase().includes(query.toLowerCase())),
+    [genes, query]
+  );
+
+  if (loading) return <div style={{ padding:40, color:"#737373" }}>Loading…</div>;
+
+  return (
+    <div style={{ padding:"32px 24px 60px" }}>
+      <div style={{ maxWidth:1400, margin:"0 auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:16, flexWrap:"wrap", gap:12 }}>
+          <div>
+            <a href="/" style={{ color:"#22d3ee", fontSize:13, textDecoration:"none" }}>← pLL Atlas</a>
+            <h1 style={{ fontSize:24, fontWeight:500, margin:"6px 0 0" }}>Perturbation Response Table</h1>
+            <p style={{ fontSize:12, color:"#525252", margin:"4px 0 0" }}>Gene expression across signalling perturbations</p>
+          </div>
+          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Filter genes…"
+            style={{ background:"#111", border:"1px solid #2a2a2a", borderRadius:8, padding:"8px 14px",
+              fontSize:13, color:"#f5f5f5", outline:"none", width:220 }} />
+        </div>
+
+        <div style={{ overflowX:"auto", border:"1px solid #1e1e1e", borderRadius:8 }}>
+          <table style={{ borderCollapse:"collapse", width:"100%", fontSize:13 }}>
+            <thead>
+              <tr>
+                <th style={{ ...thStyle, position:"sticky", left:0, background:"#16321f", zIndex:2, textAlign:"left" }}>Gene</th>
+                {COLUMNS.map(col => (
+                  <th key={col.key} style={thStyle}>{col.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((g, gi) => {
+                const conditions = g.conditions || [];
+                return (
+                  <tr key={g.id} style={{ background: gi % 2 === 0 ? "#0d0d0d" : "#121212" }}>
+                    <td style={{ ...tdStyle, position:"sticky", left:0, background: gi % 2 === 0 ? "#0d0d0d" : "#121212",
+                      zIndex:1, fontStyle:"italic", fontWeight:500, color:"#e5e5e5", whiteSpace:"nowrap" }}>
+                      <a href={"/gene/" + g.id} style={{ color:"inherit", textDecoration:"none" }}
+                         onMouseEnter={e=>e.target.style.color="#22d3ee"}
+                         onMouseLeave={e=>e.target.style.color="#e5e5e5"}>
+                        {g.name}
+                      </a>
+                    </td>
+                    {COLUMNS.map(col => {
+                      if (col.key === "wt") {
+                        return (
+                          <td key={col.key} style={tdStyle}>
+                            <Cell isWT wtImg={g.normalImg} wtCaption={g.normalCaption} />
+                          </td>
+                        );
+                      }
+                      let items;
+                      if (col.key === "other") {
+                        // "Other" column: conditions with system === "Other" regardless of direction
+                        items = conditions.filter(c => c.system === "Other");
+                      } else {
+                        items = conditions.filter(c => c.system === col.system && c.direction === col.direction);
+                      }
+                      items = items.map(c => ({ img: c.img, label: c.label }));
+                      return (
+                        <td key={col.key} style={tdStyle}>
+                          <Cell items={items} />
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const thStyle = {
+  padding:"10px 12px", background:"#16321f", color:"#f5f5f5",
+  fontSize:12, fontWeight:600, textAlign:"center", whiteSpace:"nowrap",
+  borderBottom:"1px solid #1e1e1e",
+};
+const tdStyle = {
+  padding:"8px 10px", borderBottom:"1px solid #1a1a1a", verticalAlign:"top", textAlign:"center",
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
